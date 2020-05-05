@@ -269,6 +269,9 @@ if __name__ == "__main__":
     import pprint
     pp = pprint.PrettyPrinter()
 
+    pp.pprint('ranking_date')
+    pp.pprint(ranking_date())
+
     pp.pprint('top5')
     pp.pprint(top5teams())
 
