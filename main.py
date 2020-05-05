@@ -14,6 +14,12 @@ def get_parsed_page(url):
 
     return BeautifulSoup(requests.get(url, headers=headers).text, "lxml")
 
+def ranking_date():
+
+    page = get_parsed_page("http://www.hltv.org/ranking/teams/")
+    ranking_page = page.find("div", {"class": "ranking"})
+    ranking_date = ranking_page.find("div", {"class": "regional-ranking-header"}).text[23:]
+    return ranking_date
 
 def top5teams():
     home = get_parsed_page("http://hltv.org/")
@@ -157,8 +163,10 @@ def get_matches():
 
             if (getMatch.find("td", {"class": "placeholder-text-cell"})):
                 matchObj['event'] = getMatch.find("td", {"class": "placeholder-text-cell"}).text.encode('utf8')
+                matchObj['event_image_url'] = 'https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXQ9Q1LO5kNoBhSQl-fROuh28rQR1R2KQFoprOrFAB10uHMeDxMotiwxYLfx6T1MuvXwj1UvZYliLmRodWgjVWx_0FqZTr0ddPEcVRqYw3Oug_pYQKWDs8'
             elif (getMatch.find("td", {"class": "event"})):
                 matchObj['event'] = getMatch.find("td", {"class": "event"}).text.encode('utf8')
+                matchObj['event_image_url'] = getMatch.find("td", {"class": "event"}).find("img", {"class" : "event-logo"})['src']
             else:
                 matchObj['event'] = None
 
@@ -196,8 +204,10 @@ def get_results():
 
             if (res.find("td", {"class": "placeholder-text-cell"})):
                 resultObj['event'] = res.find("td", {"class": "placeholder-text-cell"}).text.encode('utf8')
+                resultObj['event_image_url'] = None
             elif (res.find("td", {"class": "event"})):
                 resultObj['event'] = res.find("td", {"class": "event"}).text.encode('utf8')
+                resultObj['event_image_url'] = res.find("td", {"class": "event"}).find("img", {"class" : "event-logo"})['src']
             else:
                 resultObj['event'] = None
 
@@ -258,19 +268,19 @@ def get_results_by_date(start_date, end_date):
 if __name__ == "__main__":
     import pprint
     pp = pprint.PrettyPrinter()
-    
+
     pp.pprint('top5')
     pp.pprint(top5teams())
 
     pp.pprint('top30')
     pp.pprint(top30teams())
-    
+
     pp.pprint('top_players')
     pp.pprint(top_players())
-    
+
     pp.pprint('get_players')
     pp.pprint(get_players('6665'))
-    
+
     pp.pprint('get_team_info')
     pp.pprint(get_team_info('6665'))
 
@@ -283,4 +293,3 @@ if __name__ == "__main__":
     pp.pprint('get_results_by_date')
     today_iso = datetime.datetime.today().isoformat().split('T')[0]
     pp.pprint(get_results_by_date(today_iso, today_iso))
-   
