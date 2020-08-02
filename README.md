@@ -1,6 +1,10 @@
+# Code-breaking changes
+### 'event_image_url' is now called 'event_logo' 
+
 # Extra features
 * New 'ranking_date' function: retrieves the HLTV Ranking date
-* Retrievable event logo image as an url: 'event_image_url' in 'get_matches()' and 'get_results()'
+* Retrievable event logo image urls: 'event_logo'
+* Retrievable team logo images urls: 'team1_logo' and 'team2_logo'
 
 # hltv-api
 Provides an API for HLTV
