@@ -14,12 +14,15 @@ def get_parsed_page(url):
 
     return BeautifulSoup(requests.get(url, headers=headers).text, "lxml")
 
+
 def ranking_date():
 
     page = get_parsed_page("http://www.hltv.org/ranking/teams/")
     ranking_page = page.find("div", {"class": "ranking"})
-    ranking_date = ranking_page.find("div", {"class": "regional-ranking-header"}).text[23:]
+    ranking_date = ranking_page.find(
+        "div", {"class": "regional-ranking-header"}).text[23:]
     return ranking_date
+
 
 def top5teams():
     home = get_parsed_page("http://hltv.org/")
@@ -44,8 +47,10 @@ def top30teams():
                    'team-players': []}
         for player_div in team.find_all("td", {"class": "player-holder"}):
             player = {}
-            player['name'] = player_div.find('img', {'class': 'playerPicture'})['title']
-            player['player-id'] = converters.to_int(player_div.select('.pointer')[0]['href'].split("/")[-2])
+            player['name'] = player_div.find(
+                'img', {'class': 'playerPicture'})['title']
+            player['player-id'] = converters.to_int(
+                player_div.select('.pointer')[0]['href'].split("/")[-2])
             newteam['team-players'].append(player)
         teamlist.append(newteam)
     return teamlist
@@ -60,16 +65,20 @@ def top_players():
         playerObj['country'] = player.find_all('img')[1]['alt'].encode('utf8')
         buildName = player.find('img', {'class': 'img'})['alt'].split("'")
         playerObj['name'] = buildName[0].rstrip() + buildName[2]
-        playerObj['nickname'] = player.find('a', {'class': 'name'}).text.encode('utf8')
-        playerObj['rating'] = player.find('div', {'class': 'rating'}).find('span', {'class': 'bold'}).text.encode('utf8')
-        playerObj['maps-played'] = player.find('div', {'class': 'average gtSmartphone-only'}).find('span', {'class': 'bold'}).text.encode('utf8')
+        playerObj['nickname'] = player.find(
+            'a', {'class': 'name'}).text.encode('utf8')
+        playerObj['rating'] = player.find('div', {'class': 'rating'}).find(
+            'span', {'class': 'bold'}).text.encode('utf8')
+        playerObj['maps-played'] = player.find('div', {'class': 'average gtSmartphone-only'}).find(
+            'span', {'class': 'bold'}).text.encode('utf8')
 
         playersArray.append(playerObj)
     return playersArray
 
 
 def get_players(teamid):
-    page = get_parsed_page("http://www.hltv.org/?pageid=362&teamid=" + str(teamid))
+    page = get_parsed_page(
+        "http://www.hltv.org/?pageid=362&teamid=" + str(teamid))
     titlebox = page.find("div", {"class": "bodyshot-team"})
     players = []
     for player_link in titlebox.find_all("a"):
@@ -85,26 +94,33 @@ def get_team_info(teamid):
 
     example team id: 5378 (virtus pro)
     """
-    page = get_parsed_page("http://www.hltv.org/?pageid=179&teamid=" + str(teamid))
+    page = get_parsed_page(
+        "http://www.hltv.org/?pageid=179&teamid=" + str(teamid))
 
     team_info = {}
-    team_info['team-name']=page.find("div", {"class": "context-item"}).text.encode('utf8')
+    team_info['team-name'] = page.find("div",
+                                       {"class": "context-item"}).text.encode('utf8')
 
-    current_lineup = _get_current_lineup(page.find_all("div", {"class": "col teammate"}))
+    current_lineup = _get_current_lineup(
+        page.find_all("div", {"class": "col teammate"}))
     team_info['current-lineup'] = current_lineup
 
-    historical_players = _get_historical_lineup(page.find_all("div", {"class": "col teammate"}))
+    historical_players = _get_historical_lineup(
+        page.find_all("div", {"class": "col teammate"}))
     team_info['historical-players'] = historical_players
 
     team_stats_columns = page.find_all("div", {"class": "columns"})
     team_stats = {}
 
     for columns in team_stats_columns:
-        stats = columns.find_all("div", {"class": "col standard-box big-padding"})
+        stats = columns.find_all(
+            "div", {"class": "col standard-box big-padding"})
 
         for stat in stats:
-            stat_value = stat.find("div", {"class": "large-strong"}).text.encode('utf8')
-            stat_title = stat.find("div", {"class": "small-label-below"}).text.encode('utf8')
+            stat_value = stat.find(
+                "div", {"class": "large-strong"}).text.encode('utf8')
+            stat_title = stat.find(
+                "div", {"class": "small-label-below"}).text.encode('utf8')
             team_stats[stat_title] = stat_value
 
     team_info['stats'] = team_stats
@@ -120,13 +136,18 @@ def _get_current_lineup(player_anchors):
     players = []
     for player_anchor in player_anchors[0:5]:
         player = {}
-        buildName = player_anchor.find("img", {"class": "container-width"})["alt"].split('\'')
-        player['country'] = player_anchor.find("div", {"class": "teammate-info standard-box"}).find("img", {"class": "flag"})["alt"]
+        buildName = player_anchor.find(
+            "img", {"class": "container-width"})["alt"].split('\'')
+        player['country'] = player_anchor.find(
+            "div", {"class": "teammate-info standard-box"}).find("img", {"class": "flag"})["alt"]
         player['name'] = buildName[0].rstrip() + buildName[2]
-        player['nickname'] = player_anchor.find("div", {"class": "teammate-info standard-box"}).find("div", {"class": "text-ellipsis"}).text
-        player['maps-played'] = int(re.search(r'\d+', player_anchor.find("div", {"class": "teammate-info standard-box"}).find("span").text).group())
+        player['nickname'] = player_anchor.find(
+            "div", {"class": "teammate-info standard-box"}).find("div", {"class": "text-ellipsis"}).text
+        player['maps-played'] = int(re.search(r'\d+', player_anchor.find(
+            "div", {"class": "teammate-info standard-box"}).find("span").text).group())
         players.append(player)
     return players
+
 
 def _get_historical_lineup(player_anchors):
     """
@@ -136,11 +157,15 @@ def _get_historical_lineup(player_anchors):
     players = []
     for player_anchor in player_anchors[5::]:
         player = {}
-        buildName = player_anchor.find("img", {"class": "container-width"})["alt"].split('\'')
-        player['country'] = player_anchor.find("div", {"class": "teammate-info standard-box"}).find("img", {"class": "flag"})["alt"].encode('utf8')
+        buildName = player_anchor.find(
+            "img", {"class": "container-width"})["alt"].split('\'')
+        player['country'] = player_anchor.find(
+            "div", {"class": "teammate-info standard-box"}).find("img", {"class": "flag"})["alt"].encode('utf8')
         player['name'] = buildName[0].rstrip() + buildName[2]
-        player['nickname'] = player_anchor.find("div", {"class": "teammate-info standard-box"}).find("div", {"class": "text-ellipsis"}).text.encode('utf8')
-        player['maps-played'] = int(re.search(r'\d+', player_anchor.find("div", {"class": "teammate-info standard-box"}).find("span").text).group())
+        player['nickname'] = player_anchor.find(
+            "div", {"class": "teammate-info standard-box"}).find("div", {"class": "text-ellipsis"}).text.encode('utf8')
+        player['maps-played'] = int(re.search(r'\d+', player_anchor.find(
+            "div", {"class": "teammate-info standard-box"}).find("span").text).group())
         players.append(player)
     return players
 
@@ -148,38 +173,63 @@ def _get_historical_lineup(player_anchors):
 def get_matches():
     matches = get_parsed_page("http://www.hltv.org/matches/")
     matches_list = []
-    upcomingmatches = matches.find("div", {"class": "upcoming-matches"})
+    upcomingmatches = matches.find("div", {"class": "upcomingMatchesSection"})
 
-    matchdays = upcomingmatches.find_all("div", {"class": "match-day"})
+    matchdays = matches.find_all("div", {"class": "upcomingMatchesSection"})
 
     for match in matchdays:
-        matchDetails = match.find_all("table", {"class": "table"})
-
+        matchDetails = match.find_all("div", {"class": "upcomingMatch"})
+        date = match.find(
+            {'span': {'class': 'matchDayHeadline'}}).text.split()[-1]
         for getMatch in matchDetails:
             matchObj = {}
 
-            matchObj['date'] = match.find("span", {"class": "standard-headline"}).text.encode('utf8')
-            matchObj['time'] = getMatch.find("td", {"class": "time"}).text.encode('utf8').lstrip().rstrip()
-
-            if (getMatch.find("td", {"class": "placeholder-text-cell"})):
-                matchObj['event'] = getMatch.find("td", {"class": "placeholder-text-cell"}).text.encode('utf8')
-                matchObj['event_image_url'] = 'https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXQ9Q1LO5kNoBhSQl-fROuh28rQR1R2KQFoprOrFAB10uHMeDxMotiwxYLfx6T1MuvXwj1UvZYliLmRodWgjVWx_0FqZTr0ddPEcVRqYw3Oug_pYQKWDs8'
-            elif (getMatch.find("td", {"class": "event"})):
-                matchObj['event'] = getMatch.find("td", {"class": "event"}).text.encode('utf8')
-                matchObj['event_image_url'] = getMatch.find("td", {"class": "event"}).find("img", {"class" : "event-logo"})['src']
+            matchObj['date'] = date
+            matchObj['time'] = getMatch.find(
+                "div", {"class": "matchTime"}).text
+            if getMatch.find("div", {"class": "matchEvent"}):
+                matchObj['event'] = getMatch.find(
+                    "div", {"class": "matchEvent"}).text.encode('utf8').strip()
+                matchObj['event_logo'] = getMatch.find(
+                    "div", {"class": "matchEventLogoContainer"}).img['src']
             else:
-                matchObj['event'] = None
+                matchObj['event'] = getMatch.find(
+                    "div", {"class": "matchInfoEmpty"}).text.encode('utf8').strip()
+                matchObj['event_logo'] = None
 
-            if (getMatch.find_all("td", {"class": "team-cell"})):
-                matchObj['team1'] = getMatch.find_all("td", {"class": "team-cell"})[0].text.encode('utf8').lstrip().rstrip()
-                matchObj['team2'] = getMatch.find_all("td", {"class": "team-cell"})[1].text.encode('utf8').lstrip().rstrip()
+            matchTeams = getMatch.find_all("div", {"class": "matchTeams"})
+
+            if matchTeams:
+
+                teams = {
+                    "team1": getMatch.find_all("div", {"class": "matchTeam"})[
+                        0],
+                    "team2": getMatch.find_all("div", {"class": "matchTeam"})[
+                        1]
+                }
+
+                matchObj['team1'] = teams['team1'].text.encode(
+                    'utf8').lstrip().rstrip()
+                matchObj['team2'] = teams['team2'].text.encode(
+                    'utf8').lstrip().rstrip()
+
+                for team, t in teams.items():
+                    if t.find("div", {"class": "matchTeamLogoContainer"}):
+                        matchObj[f'{team}_logo'] = t.find(
+                            "div", {"class": "matchTeamLogoContainer"}).img['src']
+                    else:
+                        matchObj[f'{team}_logo'] = None
+
             else:
                 matchObj['team1'] = None
                 matchObj['team2'] = None
+                matchObj['team1_logo'] = None
+                matchObj['team2_logo'] = None
 
             matches_list.append(matchObj)
 
     return matches_list
+
 
 def get_results():
     results = get_parsed_page("http://www.hltv.org/results/")
@@ -197,25 +247,34 @@ def get_results():
             resultObj = {}
 
             if (res.parent.find("span", {"class": "standard-headline"})):
-                resultObj['date'] = res.parent.find("span", {"class": "standard-headline"}).text.encode('utf8')
+                resultObj['date'] = res.parent.find(
+                    "span", {"class": "standard-headline"}).text.encode('utf8')
             else:
                 dt = datetime.date.today()
-                resultObj['date'] = str(dt.day) + '/' + str(dt.month) + '/' + str(dt.year)
+                resultObj['date'] = str(dt.day) + '/' + \
+                    str(dt.month) + '/' + str(dt.year)
 
             if (res.find("td", {"class": "placeholder-text-cell"})):
-                resultObj['event'] = res.find("td", {"class": "placeholder-text-cell"}).text.encode('utf8')
-                resultObj['event_image_url'] = None
+                resultObj['event'] = res.find(
+                    "td", {"class": "placeholder-text-cell"}).text.encode('utf8')
+                resultObj['event_logo'] = None
             elif (res.find("td", {"class": "event"})):
-                resultObj['event'] = res.find("td", {"class": "event"}).text.encode('utf8')
-                resultObj['event_image_url'] = res.find("td", {"class": "event"}).find("img", {"class" : "event-logo"})['src']
+                resultObj['event'] = res.find(
+                    "td", {"class": "event"}).text.encode('utf8')
+                resultObj['event_logo'] = res.find("td", {"class": "event"}).find(
+                    "img", {"class": "event-logo"})['src']
             else:
                 resultObj['event'] = None
 
             if (res.find_all("td", {"class": "team-cell"})):
-                resultObj['team1'] = res.find_all("td", {"class": "team-cell"})[0].text.encode('utf8').lstrip().rstrip()
-                resultObj['team1score'] = converters.to_int(res.find("td", {"class": "result-score"}).find_all("span")[0].text.encode('utf8').lstrip().rstrip())
-                resultObj['team2'] = res.find_all("td", {"class": "team-cell"})[1].text.encode('utf8').lstrip().rstrip()
-                resultObj['team2score'] = converters.to_int(res.find("td", {"class": "result-score"}).find_all("span")[1].text.encode('utf8').lstrip().rstrip())
+                resultObj['team1'] = res.find_all(
+                    "td", {"class": "team-cell"})[0].text.encode('utf8').lstrip().rstrip()
+                resultObj['team1score'] = converters.to_int(res.find(
+                    "td", {"class": "result-score"}).find_all("span")[0].text.encode('utf8').lstrip().rstrip())
+                resultObj['team2'] = res.find_all(
+                    "td", {"class": "team-cell"})[1].text.encode('utf8').lstrip().rstrip()
+                resultObj['team2score'] = converters.to_int(res.find(
+                    "td", {"class": "result-score"}).find_all("span")[1].text.encode('utf8').lstrip().rstrip())
             else:
                 resultObj['team1'] = None
                 resultObj['team2'] = None
@@ -224,18 +283,21 @@ def get_results():
 
     return results_list
 
+
 def get_results_by_date(start_date, end_date):
     # Dates like yyyy-mm-dd  (iso)
     results_list = []
     offset = 0
     # Loop through all stats pages
     while True:
-        url = "https://www.hltv.org/stats/matches?startDate="+start_date+"&endDate="+end_date+"&offset="+str(offset)
+        url = "https://www.hltv.org/stats/matches?startDate=" + \
+            start_date+"&endDate="+end_date+"&offset="+str(offset)
 
         results = get_parsed_page(url)
 
         # Total amount of results of the query
-        amount = int(results.find("span", attrs={"class": "pagination-data"}).text.split("of")[1].strip())
+        amount = int(results.find("span", attrs={
+            "class": "pagination-data"}).text.split("of")[1].strip())
 
         # All rows (<tr>s) of the match table
         pastresults = results.find("tbody").find_all("tr")
@@ -245,11 +307,15 @@ def get_results_by_date(start_date, end_date):
             team_cols = result.find_all("td", {"class": "team-col"})
             t1 = team_cols[0].find("a").text
             t2 = team_cols[1].find("a").text
-            t1_score = int(team_cols[0].find_all(attrs={"class": "score"})[0].text.strip()[1:-1])
-            t2_score = int(team_cols[1].find_all(attrs={"class": "score"})[0].text.strip()[1:-1])
-            map = result.find(attrs={"class": "statsDetail"}).find(attrs={"class": "dynamic-map-name-full"}).text
+            t1_score = int(team_cols[0].find_all(
+                attrs={"class": "score"})[0].text.strip()[1:-1])
+            t2_score = int(team_cols[1].find_all(
+                attrs={"class": "score"})[0].text.strip()[1:-1])
+            map = result.find(attrs={"class": "statsDetail"}).find(
+                attrs={"class": "dynamic-map-name-full"}).text
             event = result.find(attrs={"class": "event-col"}).text
-            date = result.find(attrs={"class": "date-col"}).find("a").find("div").text
+            date = result.find(
+                attrs={"class": "date-col"}).find("a").find("div").text
 
             result_dict = {"team1": t1, "team2": t2, "team1score": t1_score,
                            "team2score": t2_score, "date": date, "map": map, "event": event}
@@ -264,6 +330,7 @@ def get_results_by_date(start_date, end_date):
             break
 
     return results_list
+
 
 if __name__ == "__main__":
     import pprint
