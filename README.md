@@ -14,7 +14,7 @@ Provides an API for HLTV
 ```python
 >>> import main as hltv
 >>> hltv.ranking_date()
-'May 4th, 2020'
+'July 27th, 2020'
 ```
 
 ## `top5teams`  
@@ -22,22 +22,23 @@ Provides an API for HLTV
 ```python
 >>> import main as hltv
 >>> hltv.top5teams()
-['Astralis', 'fnatic', 'Natus Vincere', 'mousesports', 'Liquid']
+['BIG', 'Vitality', 'Evil Geniuses', 'Natus Vincere', 'G2']
 ```
 
 ## `top30teams`  
 
 ```python
 >>> hltv.top30teams()
-[{'name': 'Astralis',
+[{'name': 'BIG',
   'rank': 1,
-  'rank-points': 847,
-  'team-id': 6665,
-  'team-players': [{'name': "Andreas 'Xyp9x' Højsleth", 'player-id': 4954},
-                   {'name': "Peter 'dupreeh' Rasmussen", 'player-id': 7398},
-                   {'name': "Lukas 'gla1ve' Rossander", 'player-id': 7412},
-                   {'name': "Nicolai 'device' Reedtz", 'player-id': 7592},
-                   {'name': "Emil 'Magisk' Reif", 'player-id': 9032}]},
+  'rank-points': 869,
+  'team-id': 7532,
+  'team-players': [{'name': "Johannes 'tabseN' Wodarz", 'player-id': 5794},
+                   {'name': "Tizian 'tiziaN' Feldbusch", 'player-id': 5796},
+                   {'name': "Florian 'syrsoN' Rische", 'player-id': 7266},
+                   {'name': "Ismailcan 'XANTARES' Dörtkardeş",
+                    'player-id': 7938},
+                   {'name': "Nils 'k1to' Gruhne", 'player-id': 12781}]},
 ...]
 ```
 
@@ -57,7 +58,7 @@ Provides an API for HLTV
 
 ```python
 >>> hltv.get_players("6665")
-['Xyp9x', 'dupreeh', 'gla1ve', 'device', 'Magisk']
+['dupreeh', 'device', 'es3tag', 'Magisk', 'Bubzkji']
 ```
 
 ## `get_team_info`  
@@ -65,19 +66,35 @@ Provides an API for HLTV
 ```python
 >>> hltv.get_team_info("6667")
 {'current-lineup': [{'country': 'Denmark',
-                     'maps-played': 918,
-                     'name': 'Andreas Højsleth',
-                     'nickname': 'Xyp9x'}, ...],
+                     'maps-played': 939,
+                     'name': 'Peter Rasmussen',
+                     'nickname': 'dupreeh'},
+                    {'country': 'Denmark',
+                     'maps-played': 919,
+                     'name': 'Nicolai Reedtz',
+                     'nickname': 'device'},
+                    {'country': 'Denmark',
+                     'maps-played': 0,
+                     'name': 'Patrick Hansen',
+                     'nickname': 'es3tag'},
+                    {'country': 'Denmark',
+                     'maps-played': 492,
+                     'name': 'Emil Reif',
+                     'nickname': 'Magisk'},
+                    {'country': 'Denmark',
+                     'maps-played': 0,
+                     'name': 'Lucas Andersen',
+                     'nickname': 'Bubzkji'}],
  'historical-players': [{'country': b'Denmark',
                          'maps-played': 90,
                          'name': 'René Borg',
-                         'nickname': b'cajunb'}, ...]
+                         'nickname': b'cajunb'}, ...
  'stats': {b'K/D Ratio': b'1.13',
-           b'Maps played': b'918',
-           b'Rounds played': b'23911',
-           b'Total deaths': b'75124',
-           b'Total kills': b'84890',
-           b'Wins / draws / losses': b'629 / 2 / 287'},
+           b'Maps played': b'944',
+           b'Rounds played': b'24605',
+           b'Total deaths': b'77289',
+           b'Total kills': b'87244',
+           b'Wins / draws / losses': b'645 / 2 / 297'},
  'team-name': b'Astralis'}
 ```
 
@@ -85,12 +102,14 @@ Provides an API for HLTV
 
 ```python
 >>> hltv.get_matches()
-[{'date': b'2020-05-05 - Tuesday',
-  'event': b'ESL One: Road to Rio - Europe',
-  'event_image_url': 'https://static.hltv.org/images/eventLogos/5277.png',
-  'team1': b'Dignitas',
-  'team2': b'Astralis',
-  'time': b'23:30'},
+[{'date': '2020-08-03',
+  'event': b'Nine to Five 2',
+  'event_logo': 'https://static.hltv.org/images/eventLogos/5431.png',
+  'team1': b'Gambit Youngsters',
+  'team1_logo': 'https://static.hltv.org/images/team/logo/9976',
+  'team2': b'ALTERNATE aTTaX',
+  'team2_logo': 'https://static.hltv.org/images/team/logo/4501',
+  'time': '12:00'},
 ...]
 ```
 
@@ -98,12 +117,12 @@ Provides an API for HLTV
 
 ```python
 >>> hltv.get_results()
-[ {'date': '5/5/2020',
-  'event': b'ESL One: Road to Rio - Europe',
-  'event_image_url': 'https://static.hltv.org/images/eventLogos/5277.png',
-  'team1': b'FaZe',
+[{'date': b'Results for July 26th 2020',
+  'event': b'Eden Arena Malta Vibes Cup 4',
+  'event_logo': 'https://static.hltv.org/images/eventLogos/5434.png',
+  'team1': b'LDLC',
   'team1score': 2,
-  'team2': b'GODSENT',
+  'team2': b'CR4ZY',
   'team2score': 0},
 ... ]
 ```
